@@ -1,0 +1,108 @@
+NFL Analytical Dataset Schema
+
+1. Core Player Stats (Regular Season)
+
+player_id: Unique GSIS identifier (NFL-standard).
+player_display_name: Player’s full name.
+position: Primary position (QB, RB, WR, TE).
+season: NFL season year (e.g., 2024).
+recent_team: The team the player was on at the end of the season.
+games: Total regular-season games played.
+completions / attempts: Passing completions and pass attempts.
+passing_yards / passing_tds / passing_interceptions: Standard passing production.
+sack_fumbles: Fumbles lost or occurring during a sack.
+passing_epa: Total Expected Points Added on passing plays.
+carries / rushing_yards / rushing_tds: Standard rushing production.
+rushing_epa: Total Expected Points Added on rushing plays.
+receptions / targets: Number of catches and number of times targeted.
+receiving_yards / receiving_tds: Standard receiving production.
+receiving_air_yards: Depth of targets in yards (measured from line of scrimmage).
+receiving_epa: Total Expected Points Added on receiving plays.
+target_share: Percentage of team targets directed to this player.
+fantasy_points: Total standard fantasy points.
+fantasy_points_half_ppr: Fantasy points calculated with 0.5 points per reception.
+fantasy_points_per_game: Half-PPR points divided by games played.
+
+2. Team-Level Totals (for Market Share Calcs)
+
+team_carries / team_rushing_yards / team_rushing_tds: Total team rushing volume.
+team_receptions / team_receiving_yards / team_receiving_tds: Total team receiving volume.
+
+3. PFR Advanced Passing Metrics
+
+pfr_id: Pro Football Reference unique identifier.
+team: Team abbreviation used in PFR datasets.
+drop_pct: Percentage of passes dropped by receivers.
+bad_throw_pct: Percentage of throws that were not on target (excluding spikes/throwaways).
+on_tgt_pct: Percentage of throws that were on target.
+pocket_time: Average time (seconds) spent in the pocket between snap and throw/pressure.
+pressure_pct: Percentage of dropbacks where the QB was pressured.
+times_blitzed: Number of times the opposing defense sent a blitz.
+intended_air_yards_per_pass_attempt: Average depth of all passes (IAY/PA).
+completed_air_yards_per_pass_attempt: Average depth of completed passes only.
+rpo_rush_att / rpo_rush_yards: Volume and production from RPO-designed runs.
+scrambles / scramble_yards_per_attempt: Frequency and efficiency of non-designed QB runs.
+
+4. PFR Advanced Rushing (Prefixed: rush_)
+
+rush_ybc_att: Yards before contact per rushing attempt.
+rush_yac_att: Yards after contact per rushing attempt.
+rush_brk_tkl: Total number of tackles broken while rushing.
+rush_att_br: Attempts per broken tackle (efficiency metric).
+rush_x1d: Rushing attempts resulting in a first down.
+rush_loaded: Number of carries against a "loaded box" (8+ defenders).
+
+5. PFR Advanced Receiving (Prefixed: rec_)
+
+rec_adot: Average depth of target.
+rec_yac_r: Yards after catch per reception.
+rec_ybc_r: Yards before catch (air yards) per reception.
+rec_brk_tkl: Number of tackles broken after a catch.
+rec_rec_br: Receptions per broken tackle.
+rec_x1d: Receptions resulting in a first down.
+rec_drop_percent: Percentage of targets dropped by the player.
+
+6. FTN Charting Data (Flags)
+
+is_catchable_ball: Boolean/Flag for whether the target was physically catchable.
+is_contested_ball: Boolean/Flag for whether a defender was in range to contest.
+is_drop: Boolean/Flag confirming a dropped pass.
+is_interception_worthy: Flag for QB throws that "should" have been intercepted.
+
+7. Roster, Draft, and Contract Data
+
+draft_round / draft_pick_num: Round and overall pick in the NFL Draft.
+draft_team: The team that originally drafted the player.
+draft_age: Player's age on the day they were drafted.
+birth_date: Player's date of birth.
+years_exp: Number of years of NFL experience.
+apy: Average Per Year contract value.
+contract_years_remaining: Number of seasons left on current deal.
+is_contract_year: Boolean/Flag indicating if the player is in the final year of their deal.
+season_age: Player's age during the specific season (calculated).
+
+
+
+"""
+Ideas:
+draft_roi = fantasy_points_per_game / draft_pick_num
+
+QB - 
+designed_rush_share = rpo_rush_att / carries
+scramble_rush_share = scrambles / carries
+
+RB - 
+total_touch_share = (carries + receptions) / (team_carries + team_receptions) # already have target share for WR
+contact_balance = yac_att / ybc_att
+elusiveness_index = brk_tkl / carries
+rb_drive_dependency = rush_x1d / carries
+
+WR/TE -
+separation_index = ybc_r / adot
+yac_creator = yac_r / ybc_r
+elusiveness_index = brk_tkl / receptions
+receiver_drive_dependency = rec_x1d / receptions
+target_value = fantasy_points_half_ppr / targets
+receiver_creation_adj = (rec_yac_r + rec_brk_tkl) / season_age
+
+"""
